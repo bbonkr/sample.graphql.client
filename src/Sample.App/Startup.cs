@@ -12,6 +12,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using kr.bbon.AspNetCore;
+using Sample.Services;
+using System.Text.Json;
 
 namespace Sample.App
 {
@@ -30,13 +32,34 @@ namespace Sample.App
             var version = new ApiVersion(1, 0);
 
             services.Configure<AppOptions>(Configuration.GetSection(AppOptions.Name));
+            services.Configure<JsonSerializerOptions>(options =>
+            {
+                options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+                options.WriteIndented = true;
+                options.IgnoreReadOnlyProperties = true;
+                options.IgnoreReadOnlyFields = true;
+                options.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                options.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+            });
+
+            services.AddGraphqlService();
 
             services.AddHttpClient();
 
             services.AddControllers(options =>
             {
                 options.Filters.Add<kr.bbon.AspNetCore.Filters.ApiExceptionHandlerFilter>();
-            });                
+            }).AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.WriteIndented = true;
+                options.JsonSerializerOptions.IgnoreReadOnlyProperties = true;
+                options.JsonSerializerOptions.IgnoreReadOnlyFields = true;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                options.JsonSerializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+            });
 
             services.AddApiVersioningAndSwaggerGen(version);
         }

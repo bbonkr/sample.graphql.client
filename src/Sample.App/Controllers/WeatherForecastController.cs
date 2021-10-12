@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using kr.bbon.AspNetCore;
+using kr.bbon.AspNetCore.Mvc;
 
 namespace Sample.App.Controllers
 {
     [ApiController]
     [Area(DefaultValues.AreaName)]
     [Route(DefaultValues.RouteTemplate)]
-    public class WeatherForecastController : ControllerBase
+    public class WeatherForecastController : ApiControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
